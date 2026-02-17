@@ -3,168 +3,122 @@
 <head>
 <meta charset="UTF-8">
 <title>Faits Gaming Interdits</title>
-<link rel="stylesheet" href="style.css">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-
 body {
-  background: #0f1220;
-  color: white;
-  font-family: Arial, sans-serif;
-  text-align: center;
-  padding: 40px;
+  background:#0f1220;
+  color:white;
+  font-family:Arial;
+  text-align:center;
+  padding:40px;
 }
 
-.neon-title {
-  font-size: 2rem;
-  color: #aab0ff;
-  margin-bottom: 20px;
-}
-
-.media-container {
-  margin: 20px 0;
-}
+h1 { color:#aab0ff; }
 
 .game-media {
-  width: 100%;
-  max-width: 500px;
-  border-radius: 12px;
-  margin: 15px auto;
-  display: block;
-  transition: opacity 0.4s ease;
+  width:100%;
+  max-width:500px;
+  border-radius:12px;
+  margin:15px auto;
+  display:block;
 }
 
-.gif {
-  max-width: 400px;
-}
-
-@media (max-width: 768px) {
-  .gif {
-    max-width: 250px;
-  }
-}
-
-#factText {
-  transition: opacity 0.4s ease;
-  max-width: 700px;
-  margin: 0 auto;
-}
-
-.knew-box {
-  margin: 12px auto 0 auto;
-  padding: 8px 14px;
-  border: 2px solid #aab0ff;
-  border-radius: 15px;
-  cursor: pointer;
-  width: fit-content;
-  transition: all 0.25s ease;
-}
-
-.knew-box.active {
-  background: #aab0ff;
-  color: #0f1220;
-}
+.gif { max-width:350px; }
 
 button {
-  padding: 12px 25px;
-  border-radius: 8px;
-  border: 2px solid #aab0ff;
-  background: transparent;
-  color: #aab0ff;
-  cursor: pointer;
-  margin-top: 20px;
+  padding:10px 20px;
+  border-radius:8px;
+  border:2px solid #aab0ff;
+  background:transparent;
+  color:#aab0ff;
+  cursor:pointer;
+  margin-top:20px;
 }
 
 button:hover {
-  background: #aab0ff;
-  color: #0f1220;
+  background:#aab0ff;
+  color:#0f1220;
 }
-
 </style>
 </head>
 
 <body>
 
-<h1 class="neon-title">⚡ Faits Gaming Interdits</h1>
+<h1>⚡ Faits Gaming Interdits</h1>
 
 <h2 id="gameTitle"></h2>
 
-<div class="media-container">
-  <img id="gameImage" class="game-media">
-  <img id="gameGif" class="game-media gif">
-</div>
+<img id="gameImage" class="game-media">
+<img id="gameGif" class="game-media gif">
 
 <div id="factText"></div>
 
 <button id="nextBtn">Encore ⚡</button>
 
+<script>
 
-<p id="counter"></p>
+/* ========= JEUX PAR DÉFAUT ========= */
 
-
-
-
-<script type="module">
-
-import { GameService } from "./gameService.js";
-
-let games = [];
-let count = 0;
-let lastIndex = -1;
-
-/* ========= LIVE SUBSCRIPTION ========= */
-
-GameService.subscribeToGames((data) => {
-  games = data;
-
-  // Affiche un jeu au premier chargement
-  if (games.length > 0 && count === 0) {
-    newFact();
+const defaultGames = [
+  {
+    title: "Skyrim",
+    image: "images/skyrim.jpg",
+    gif: "images/skyrim-giant.gif",
+    facts: [
+      "Les géants pouvaient projeter les joueurs.",
+      "La scène d’intro est célèbre pour ses bugs.",
+      "La salle qasmoke contient tous les objets."
+    ]
   }
-});
+];
+
+/* ========= CHARGEMENT ========= */
+
+let games = JSON.parse(localStorage.getItem("games"));
+
+if (!games || games.length === 0) {
+  games = defaultGames;
+  localStorage.setItem("games", JSON.stringify(games));
+}
+
+let lastIndex = -1;
 
 /* ========= AFFICHAGE ========= */
 
 function newFact() {
 
-  if (!games || games.length === 0) return;
+  if (games.length === 0) return;
 
   let randomIndex;
-  do {
-    randomIndex = Math.floor(Math.random() * games.length);
-  } while (randomIndex === lastIndex);
+
+  if (games.length === 1) {
+    randomIndex = 0;
+  } else {
+    do {
+      randomIndex = Math.floor(Math.random() * games.length);
+    } while (randomIndex === lastIndex);
+  }
 
   lastIndex = randomIndex;
 
   const game = games[randomIndex];
 
-  const title = document.getElementById("gameTitle");
-  const text = document.getElementById("factText");
-  const image = document.getElementById("gameImage");
-  const gif = document.getElementById("gameGif");
+  document.getElementById("gameTitle").textContent = "🎮 " + game.title;
+  document.getElementById("gameImage").src = game.image;
+  document.getElementById("gameGif").src = game.gif;
 
-  title.textContent = "🎮 " + game.title;
-  image.src = game.image;
-  gif.src = game.gif;
-
-  text.innerHTML =
-    `<ul style="list-style:none; padding:0; text-align:left;">
-      ${game.facts.map(f => `<li style="margin-bottom:15px;">⚡ ${f}</li>`).join("")}
+  document.getElementById("factText").innerHTML =
+    `<ul style="list-style:none; padding:0;">
+      ${game.facts.map(f => `<li style="margin:15px 0;">⚡ ${f}</li>`).join("")}
      </ul>`;
-
-  count++;
-  document.getElementById("counter").textContent =
-    "Jeux affichés : " + count;
 }
-
-/* ========= BOUTON ========= */
 
 document.getElementById("nextBtn").addEventListener("click", newFact);
 
+newFact();
+
 </script>
-
-
 
 </body>
 </html>

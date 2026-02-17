@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Admin - Gestion Jeux</title>
+<title>Admin</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -23,7 +23,7 @@ input, textarea {
 
 button {
   padding:8px 15px;
-  margin-right:5px;
+  margin:5px 5px 5px 0;
   border-radius:6px;
   border:2px solid #aab0ff;
   background:transparent;
@@ -38,100 +38,75 @@ button:hover {
 </style>
 </head>
 
-<body style="display:none;">
+<body>
 
+<script>
+const PASSWORD = "Logar2026";
+
+const input = prompt("Mot de passe admin :");
+
+if (input !== PASSWORD) {
+  alert("Accès refusé");
+  window.location.href = "funfacts.html";
+}
+</script>
 
 <h1>Interface Admin</h1>
 
-<button id="logoutBtn">Déconnexion</button>
-
-<h2>Ajouter / Modifier un jeu</h2>
-
 <input id="title" placeholder="Nom du jeu">
-<input id="image" placeholder="URL image">
-<input id="gif" placeholder="URL gif">
+<input id="image" placeholder="Chemin image (images/xxx.jpg)">
+<input id="gif" placeholder="Chemin gif (images/xxx.gif)">
 
 <textarea id="fact1" placeholder="Fait 1"></textarea>
 <textarea id="fact2" placeholder="Fait 2"></textarea>
 <textarea id="fact3" placeholder="Fait 3"></textarea>
 
-<button id="saveBtn">Enregistrer</button>
-<button id="cancelBtn">Annuler</button>
+<button onclick="saveGame()">Enregistrer</button>
+<button onclick="resetForm()">Annuler</button>
 
 <hr>
 
 <h2>Liste des jeux</h2>
 <div id="gameList"></div>
 
-<script type="module">
+<script>
 
-import { GameService } from "./gameService.js";
-import { auth } from "./firebaseConfig.js";
-import { onAuthStateChanged, signOut } from 
-"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+let games = JSON.parse(localStorage.getItem("games")) || [];
+let editIndex = null;
 
-/* ========= PROTECTION ========= */
+/* ========= SAUVEGARDE ========= */
 
-onAuthStateChanged(auth, user => {
-  if (!user) {
-    window.location.replace("login.html");
+function saveGame() {
+
+  const gameData = {
+    title: document.getElementById("title").value,
+    image: document.getElementById("image").value,
+    gif: document.getElementById("gif").value,
+    facts: [
+      document.getElementById("fact1").value,
+      document.getElementById("fact2").value,
+      document.getElementById("fact3").value
+    ]
+  };
+
+  if (editIndex !== null) {
+    games[editIndex] = gameData;
+    editIndex = null;
   } else {
-    document.body.style.display = "block";
+    games.push(gameData);
   }
-});
 
-
-/* ========= LOGOUT ========= */
-
-document.getElementById("logoutBtn").addEventListener("click", async () => {
-  await signOut(auth);
-  window.location.href = "login.html";
-});
-
-/* ========= VARIABLES ========= */
-
-let games = [];
-let editId = null;
-
-/* ========= CHARGEMENT ========= */
-
-async function loadGames() {
-  games = await GameService.getGames();
-  renderList();
-}
-
-/* ========= SAVE ========= */
-
-async function saveGame() {
-
-  const title = document.getElementById("title").value;
-  const image = document.getElementById("image").value;
-  const gif = document.getElementById("gif").value;
-
-  const facts = [
-    document.getElementById("fact1").value,
-    document.getElementById("fact2").value,
-    document.getElementById("fact3").value
-  ];
-
-  const gameData = { title, image, gif, facts };
-
-  if (editId) {
-    await GameService.updateGame(editId, gameData);
-    editId = null;
-  } else {
-    await GameService.addGame(gameData);
-  }
+  localStorage.setItem("games", JSON.stringify(games));
 
   resetForm();
-  loadGames();
+  loadGameList();
 }
 
-/* ========= EDIT ========= */
+/* ========= MODIFIER ========= */
 
-function editGame(id) {
+function editGame(index) {
 
-  const game = games.find(g => g.id === id);
+  const game = games[index];
 
   document.getElementById("title").value = game.title;
   document.getElementById("image").value = game.image;
@@ -140,17 +115,18 @@ function editGame(id) {
   document.getElementById("fact2").value = game.facts[1];
   document.getElementById("fact3").value = game.facts[2];
 
-  editId = id;
+  editIndex = index;
 }
 
-/* ========= DELETE ========= */
+/* ========= SUPPRIMER ========= */
 
-async function deleteGame(id) {
+function deleteGame(index) {
 
   if (!confirm("Supprimer ce jeu ?")) return;
 
-  await GameService.deleteGame(id);
-  loadGames();
+  games.splice(index, 1);
+  localStorage.setItem("games", JSON.stringify(games));
+  loadGameList();
 }
 
 /* ========= RESET ========= */
@@ -162,41 +138,26 @@ function resetForm() {
   document.getElementById("fact1").value = "";
   document.getElementById("fact2").value = "";
   document.getElementById("fact3").value = "";
-  editId = null;
+  editIndex = null;
 }
 
-/* ========= RENDER ========= */
+/* ========= AFFICHAGE ========= */
 
-function renderList() {
+function loadGameList() {
 
   const container = document.getElementById("gameList");
 
-  container.innerHTML = games.map(game => `
+  container.innerHTML = games.map((game, index) => `
     <div style="margin-bottom:10px; padding:10px; border:1px solid #333;">
       <strong>${game.title}</strong>
       <br>
-      <button data-edit="${game.id}">Modifier</button>
-      <button data-delete="${game.id}">Supprimer</button>
+      <button onclick="editGame(${index})">Modifier</button>
+      <button onclick="deleteGame(${index})">Supprimer</button>
     </div>
   `).join("");
-
-  document.querySelectorAll("[data-edit]").forEach(btn => {
-    btn.addEventListener("click", () => editGame(btn.dataset.edit));
-  });
-
-  document.querySelectorAll("[data-delete]").forEach(btn => {
-    btn.addEventListener("click", () => deleteGame(btn.dataset.delete));
-  });
 }
 
-/* ========= EVENTS ========= */
-
-document.getElementById("saveBtn").addEventListener("click", saveGame);
-document.getElementById("cancelBtn").addEventListener("click", resetForm);
-
-/* ========= INIT ========= */
-
-loadGames();
+loadGameList();
 
 </script>
 
