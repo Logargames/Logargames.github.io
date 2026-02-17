@@ -5,6 +5,64 @@
   box-sizing: border-box;
 }
 
+/* ===========================
+   LOGAR UI SYSTEM
+=========================== */
+
+:root {
+  --logar-bg: #0f1220;
+  --logar-card: #1b1f3b;
+  --logar-accent: #aab0ff;
+  --logar-accent-strong: #7f86ff;
+  --logar-text: #e6e6eb;
+}
+
+/* TITRES SIGNATURE */
+.logar-title {
+  font-size: 2rem;
+  color: var(--logar-accent);
+  -webkit-text-stroke: 0.6px rgba(0,0,0,0.8);
+  letter-spacing: 1px;
+}
+
+/* CARTES LOGAR */
+.logar-card {
+  background: var(--logar-card);
+  padding: 25px;
+  border-radius: 12px;
+  border: 1px solid rgba(170,176,255,0.15);
+  transition: all 0.25s ease;
+}
+
+.logar-card:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 8px 20px rgba(0,0,0,0.4),
+    0 0 15px rgba(170,176,255,0.15);
+}
+
+/* BOUTON SIGNATURE */
+.logar-btn {
+  padding: 12px 30px;
+  border: 2px solid var(--logar-accent);
+  background: transparent;
+  color: var(--logar-accent);
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.logar-btn:hover {
+  background: var(--logar-accent);
+  color: var(--logar-bg);
+  box-shadow:
+    0 0 10px var(--logar-accent),
+    0 0 20px var(--logar-accent-strong);
+  transform: scale(1.05);
+}
+
+
 /* BASE */
 body {
   font-family: 'Inter', Arial, Helvetica, sans-serif;
@@ -243,3 +301,195 @@ hr {
   height: 1px;
   background: rgba(255,255,255,0.1);
 }
+
+/* ===========================
+   LOGAR UI – PAGE JEUX
+=========================== */
+
+.game {
+  display: flex;
+  gap: 40px;
+  margin-bottom: 60px;
+  background: var(--logar-card);
+  padding: 30px;
+  border-radius: 14px;
+  border: 1px solid rgba(170,176,255,0.15);
+  transition: all 0.3s ease;
+}
+
+.game:hover {
+  transform: translateY(-5px);
+  box-shadow:
+    0 10px 25px rgba(0,0,0,0.4),
+    0 0 20px rgba(170,176,255,0.12);
+}
+
+.game-media img {
+  width: 280px;
+  border-radius: 12px;
+}
+
+.game-content h3 {
+  font-size: 1.6rem;
+  color: var(--logar-accent);
+  -webkit-text-stroke: 0.5px rgba(0,0,0,0.7);
+  margin-bottom: 10px;
+}
+
+.meta {
+  font-size: 0.85rem;
+  opacity: 0.7;
+  margin-bottom: 15px;
+}
+
+.game-content ul {
+  margin: 15px 0;
+  padding-left: 20px;
+}
+
+.btn {
+  display: inline-block;
+  padding: 10px 25px;
+  border: 2px solid var(--logar-accent);
+  color: var(--logar-accent);
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.25s ease;
+}
+
+.btn:hover {
+  background: var(--logar-accent);
+  color: var(--logar-bg);
+  box-shadow:
+    0 0 10px var(--logar-accent),
+    0 0 20px var(--logar-accent-strong);
+  transform: scale(1.05);
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .game {
+    flex-direction: column;
+  }
+
+  .game-media img {
+    width: 100%;
+  }
+}
+
+.media-container {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.game-media {
+  width: 100%;
+  max-width: 500px;
+  border-radius: 12px;
+  margin: 15px auto;
+  display: block;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+}
+
+.gif {
+  max-width: 400px;
+}
+
+.media-container {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.game-media {
+  width: 100%;
+  max-width: 500px;
+  border-radius: 12px;
+  margin: 15px auto;
+  display: block;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+}
+
+.gif {
+  max-width: 400px;
+}
+
+
+#gameTitle,
+#factText,
+#gameImage,
+#gameGif {
+  transition: opacity 0.4s ease-in-out;
+}
+
+.tag {
+  display: inline-block;
+  background: #aab0ff;
+  color: #0f1220;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  margin: 3px;
+  font-weight: bold;
+}
+
+#gameTitle,
+#factText,
+#gameImage,
+#gameGif {
+  transition: opacity 0.4s ease-in-out;
+}
+
+.media-container {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.game-media {
+  width: 100%;
+  max-width: 500px;
+  border-radius: 12px;
+  margin: 15px auto;
+  display: block;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+}
+
+.gif {
+  max-width: 400px;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .gif {
+    max-width: 250px;
+  }
+}
+
+input[type="checkbox"]:checked {
+  accent-color: #aab0ff;
+}
+
+.knew-box {
+  margin: 12px auto 0 auto;
+  padding: 8px 14px;
+  border: 2px solid #aab0ff;
+  border-radius: 15px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.25s ease;
+  background: transparent;
+  width: fit-content;
+  text-align: center;
+}
+
+.knew-box.active {
+  background: #aab0ff;
+  color: #0f1220;
+  box-shadow: 0 0 10px #7f86ff;
+}
+
+
+.knew-box:hover {
+  background: rgba(170,176,255,0.2);
+}
+

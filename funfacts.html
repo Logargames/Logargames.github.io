@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Faits Gaming Interdits</title>
+<link rel="stylesheet" href="style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+
+body {
+  background: #0f1220;
+  color: white;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 40px;
+}
+
+.neon-title {
+  font-size: 2rem;
+  color: #aab0ff;
+  margin-bottom: 20px;
+}
+
+.media-container {
+  margin: 20px 0;
+}
+
+.game-media {
+  width: 100%;
+  max-width: 500px;
+  border-radius: 12px;
+  margin: 15px auto;
+  display: block;
+  transition: opacity 0.4s ease;
+}
+
+.gif {
+  max-width: 400px;
+}
+
+@media (max-width: 768px) {
+  .gif {
+    max-width: 250px;
+  }
+}
+
+#factText {
+  transition: opacity 0.4s ease;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.knew-box {
+  margin: 12px auto 0 auto;
+  padding: 8px 14px;
+  border: 2px solid #aab0ff;
+  border-radius: 15px;
+  cursor: pointer;
+  width: fit-content;
+  transition: all 0.25s ease;
+}
+
+.knew-box.active {
+  background: #aab0ff;
+  color: #0f1220;
+}
+
+button {
+  padding: 12px 25px;
+  border-radius: 8px;
+  border: 2px solid #aab0ff;
+  background: transparent;
+  color: #aab0ff;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+button:hover {
+  background: #aab0ff;
+  color: #0f1220;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1 class="neon-title">⚡ Faits Gaming Interdits</h1>
+
+<h2 id="gameTitle"></h2>
+
+<div class="media-container">
+  <img id="gameImage" class="game-media">
+  <img id="gameGif" class="game-media gif">
+</div>
+
+<div id="factText"></div>
+
+<button id="nextBtn">Encore ⚡</button>
+
+
+<p id="counter"></p>
+
+
+
+
+<script type="module">
+
+import { GameService } from "./gameService.js";
+
+let games = [];
+let count = 0;
+let lastIndex = -1;
+
+/* ========= LIVE SUBSCRIPTION ========= */
+
+GameService.subscribeToGames((data) => {
+  games = data;
+
+  // Affiche un jeu au premier chargement
+  if (games.length > 0 && count === 0) {
+    newFact();
+  }
+});
+
+/* ========= AFFICHAGE ========= */
+
+function newFact() {
+
+  if (!games || games.length === 0) return;
+
+  let randomIndex;
+  do {
+    randomIndex = Math.floor(Math.random() * games.length);
+  } while (randomIndex === lastIndex);
+
+  lastIndex = randomIndex;
+
+  const game = games[randomIndex];
+
+  const title = document.getElementById("gameTitle");
+  const text = document.getElementById("factText");
+  const image = document.getElementById("gameImage");
+  const gif = document.getElementById("gameGif");
+
+  title.textContent = "🎮 " + game.title;
+  image.src = game.image;
+  gif.src = game.gif;
+
+  text.innerHTML =
+    `<ul style="list-style:none; padding:0; text-align:left;">
+      ${game.facts.map(f => `<li style="margin-bottom:15px;">⚡ ${f}</li>`).join("")}
+     </ul>`;
+
+  count++;
+  document.getElementById("counter").textContent =
+    "Jeux affichés : " + count;
+}
+
+/* ========= BOUTON ========= */
+
+document.getElementById("nextBtn").addEventListener("click", newFact);
+
+</script>
+
+
+
+</body>
+</html>
