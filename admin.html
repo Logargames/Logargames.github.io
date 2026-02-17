@@ -38,7 +38,8 @@ button:hover {
 </style>
 </head>
 
-<body>
+<body style="display:none;">
+
 
 <h1>Interface Admin</h1>
 
@@ -73,9 +74,12 @@ import { onAuthStateChanged, signOut } from
 
 onAuthStateChanged(auth, user => {
   if (!user) {
-    window.location.href = "login.html";
+    window.location.replace("login.html");
+  } else {
+    document.body.style.display = "block";
   }
 });
+
 
 /* ========= LOGOUT ========= */
 
